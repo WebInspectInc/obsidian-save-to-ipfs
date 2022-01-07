@@ -1,4 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+const HTTPInterface = require('./HTTPInterface').HTTPInterface;
 
 interface IPFSPluginSettings {
 	pinLocally: boolean;
@@ -17,6 +18,9 @@ export default class IPFSPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		this.HTTPInterface = new HTTPInterface();
+		await this.HTTPInterface.init();
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		// let statusBarItemEl = this.addStatusBarItem();
