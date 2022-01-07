@@ -91,20 +91,20 @@ class IPFSSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		let {containerEl} = this;
+		let {containerEl, plugin} = this;
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'IPFS Settings.'});
+		containerEl.createEl('h2', {text: 'IPFS Settings'});
 
 		new Setting(containerEl)
 			.setName('Pin Locally')
 			.setDesc('Only works if you have a local IPFS node running.')
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.pinLocally)
+				.setValue(plugin.settings.pinLocally)
 				.onChange(async (value) => {
-					this.plugin.settings.pinLocally = value;
-				    await this.plugin.saveSettings();
+					plugin.settings.pinLocally = value;
+				    await plugin.saveSettings();
 				}));
 
 		new Setting(containerEl)
@@ -112,10 +112,10 @@ class IPFSSettingTab extends PluginSettingTab {
 			.setDesc('The public key for your Pinata account.')
 			.addText(text => text
 				.setPlaceholder('Enter your key')
-				.setValue(this.plugin.settings.pinataAPIKey)
+				.setValue(plugin.settings.pinataAPIKey)
 				.onChange(async (value) => {
-					this.plugin.settings.pinataAPIKey = value;
-					await this.plugin.saveSettings();
+					plugin.settings.pinataAPIKey = value;
+					await plugin.saveSettings();
 				}));
 
 		new Setting(containerEl)
@@ -123,10 +123,11 @@ class IPFSSettingTab extends PluginSettingTab {
 			.setDesc('Keep it secret. Keep it safe.')
 			.addText(text => text
 				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.pinataSecretKey)
+				.setValue(plugin.settings.pinataSecretKey)
 				.onChange(async (value) => {
-					this.plugin.settings.pinataSecretKey = value;
-					await this.plugin.saveSettings();
+					plugin.settings.pinataSecretKey = value;
+					await plugin.saveSettings();
 				}));
+
 	}
 }
