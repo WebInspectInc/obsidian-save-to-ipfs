@@ -1,17 +1,19 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
-interface MyPluginSettings {
+interface IPFSPluginSettings {
+	pinLocally: boolean;
 	pinataAPIKey: string;
 	pinataSecretKey: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: IPFSPluginSettings = {
+	pinLocally: false,
 	pinataAPIKey: '',
 	pinataSecretKey: ''
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class IPFSPlugin extends Plugin {
+	settings: IPFSPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -41,7 +43,7 @@ export default class MyPlugin extends Plugin {
 		});
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new IPFSSettingTab(this.app, this));
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		//this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
@@ -76,10 +78,10 @@ class SampleModal extends Modal {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+class IPFSSettingTab extends PluginSettingTab {
+	plugin: IPFSPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: IPFSPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -91,6 +93,15 @@ class SampleSettingTab extends PluginSettingTab {
 
 		containerEl.createEl('h2', {text: 'IPFS Settings.'});
 
+		new Setting(containerEl)
+			.setName('Pin Locally')
+			.setDesc('Only works if you have a local IPFS node running.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.pinLocally)
+				.onChange(async (value) => {
+					this.plugin.settings.pinLocally = value;
+				    await this.plugin.saveSettings();
+				}));
 
 		new Setting(containerEl)
 			.setName('Pinata API Key')
