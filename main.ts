@@ -1,11 +1,13 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface MyPluginSettings {
-	mySetting: string;
+	pinataAPIKey: string;
+	pinataSecretKey: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	pinataAPIKey: '',
+	pinataSecretKey: ''
 }
 
 export default class MyPlugin extends Plugin {
@@ -42,7 +44,7 @@ export default class MyPlugin extends Plugin {
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		//this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {
@@ -87,17 +89,28 @@ class SampleSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
+		containerEl.createEl('h2', {text: 'IPFS Settings.'});
+
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('Pinata API Key')
+			.setDesc('The public key for your Pinata account.')
+			.addText(text => text
+				.setPlaceholder('Enter your key')
+				.setValue(this.plugin.settings.pinataAPIKey)
+				.onChange(async (value) => {
+					this.plugin.settings.pinataAPIKey = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('Pinata Private Key')
+			.setDesc('Keep it secret. Keep it safe.')
 			.addText(text => text
 				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setValue(this.plugin.settings.pinataSecretKey)
 				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.pinataSecretKey = value;
 					await this.plugin.saveSettings();
 				}));
 	}
