@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-const HTTPInterface = require('./HTTPInterface').HTTPInterface;
+import HTTPInterface from 'HTTPInterface';
 
 interface IPFSPluginSettings {
 	pinLocally: boolean;
@@ -15,12 +15,10 @@ const DEFAULT_SETTINGS: IPFSPluginSettings = {
 
 export default class IPFSPlugin extends Plugin {
 	settings: IPFSPluginSettings;
+	httpi: HTTPInterface;
 
 	async onload() {
 		await this.loadSettings();
-
-		this.HTTPInterface = new HTTPInterface();
-		await this.HTTPInterface.init();
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		// let statusBarItemEl = this.addStatusBarItem();
@@ -28,8 +26,8 @@ export default class IPFSPlugin extends Plugin {
 
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
-			id: 'sync-current-file',
-			name: 'Sync current file with codebase',
+			id: 'add-selection-ipfs',
+			name: 'Add current selection to IPFS',
 			checkCallback: (checking: boolean) => {
 				// Conditions to check
 				let markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -37,6 +35,7 @@ export default class IPFSPlugin extends Plugin {
 					// If checking is true, we're simply "checking" if the command can be run.
 					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
+						saveToIPFS('test');
 						new SampleModal(this.app).open();
 					}
 
@@ -64,6 +63,15 @@ export default class IPFSPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+}
+
+async function saveToIPFS(content: string): string {
+	this.httpi = new HTTPInterface();
+	await this.httpi.init();
+
+	console.log(content);
+
+	return 'it worked!';
 }
 
 class SampleModal extends Modal {
@@ -128,6 +136,5 @@ class IPFSSettingTab extends PluginSettingTab {
 					plugin.settings.pinataSecretKey = value;
 					await plugin.saveSettings();
 				}));
-
 	}
 }
