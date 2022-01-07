@@ -27,7 +27,7 @@ export default class IPFSPlugin extends Plugin {
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'add-selection-ipfs',
-			name: 'Add current selection to IPFS',
+			name: 'Save markdown to IPFS',
 			checkCallback: (checking: boolean) => {
 				// Conditions to check
 				let markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -35,7 +35,7 @@ export default class IPFSPlugin extends Plugin {
 					// If checking is true, we're simply "checking" if the command can be run.
 					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
-						saveToIPFS('test');
+						saveToIPFS(markdownView);
 						new SampleModal(this.app).open();
 					}
 
@@ -69,7 +69,7 @@ async function saveToIPFS(content: string): string {
 	this.httpi = new HTTPInterface();
 	await this.httpi.init();
 
-	console.log(content);
+	console.log(content.data);
 
 	return 'it worked!';
 }
